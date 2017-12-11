@@ -116,15 +116,37 @@ function selectType() {
   }
 }
 
-function createTask(name, datetime, type) {
+function createTask(name, datetime, duration, type) {
   selected = new Date(datetime.getTime());
   selected.setHours(0, 0, 0, 0);
 
   var t = localStorage.getItem(selected.getFullYear() + '-' + (selected.getMonth() + 1) + '-' + selected.getDate()) || "[]";
   var tasks = JSON.parse(t) || [];
 
-  tasks.push({nome:name, horario: [datetime.getHours(), datetime.getMinutes()], done: false});
+  tasks.push({nome:name, horario: [datetime.getHours(), datetime.getHours() + duration], done: false});
 
   localStorage.setItem(selected.getFullYear() + '-' + (selected.getMonth() + 1) + '-' + selected.getDate(), JSON.stringify(tasks));
   setSelectedDate(selected.getFullYear() + '-' + (selected.getMonth() + 1) + '-' + selected.getDate());
+}
+
+function addTask() {
+  switch (document.querySelector('input[name="type"]:checked').value) {
+    case 'tarefa_simples':
+      let name = document.getElementById('name').value;
+      let date = document.getElementById('simple_date').value;
+      let time = document.getElementById('simple_hour').value;
+      let duration = document.getElementById('simple_duration').value;
+
+      createTask(name, new Date(date.toString() + ' ' + time.toString()), parseInt(duration.split(":")[0]), 'simples');
+
+      document.getElementById('name').value = '';
+      document.getElementById('simple_date').value = '';
+      document.getElementById('simple_hour').value = '';
+      document.getElementById('simple_duration').value = '';
+      break;
+    case 'tarefa_automatica':
+    case 'tarefa_recorrente':
+      alert('Desculpe: devido ao tempo alocado para a disciplina não foi possivel completar essa funcionalidade');
+      break;
+  }
 }
